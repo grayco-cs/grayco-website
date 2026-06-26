@@ -17,6 +17,20 @@
   var GET_FN='/.netlify/functions/get-content';
   var SAVE_FN='/.netlify/functions/save-content';
 
+  // ── FIX: redirect Cloudinary uploads to the correct account ──────────────
+  // The built app has the wrong cloud name baked in ('grayco'); rewrite it
+  // to the real one ('dzewujlvg') so photos upload to the cloud instead of
+  // filling up browser storage.
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts){
+    try{
+      if (typeof url === 'string' && url.indexOf('cloudinary.com/v1_1/grayco/') !== -1){
+        url = url.replace('cloudinary.com/v1_1/grayco/', 'cloudinary.com/v1_1/dzewujlvg/');
+      }
+    }catch(e){}
+    return _origFetch.call(this, url, opts);
+  };
+
   function toast(msg,color){
     var t=document.createElement('div');
     t.innerText=msg;
@@ -27,7 +41,7 @@
 
   // Load latest content via Netlify function (bypasses all caching)
   try{
-    var res=await fetch(GET_FN,{cache:'no-store'});
+    var res=await _origFetch(GET_FN,{cache:'no-store'});
     if(res.ok){
       var text=await res.text();
       try{
@@ -40,11 +54,11 @@
   }catch(e){console.warn('[GrayCo] Cloud load failed:',e.message);}
 
   // Intercept saves to also push to cloud
-  var _orig=Storage.prototype.setItem;
+  var _origSetItem=Storage.prototype.setItem;
   Storage.prototype.setItem=function(k,v){
-    _orig.call(this,k,v);
+    _origSetItem.call(this,k,v);
     if(k===KEY){
-      fetch(SAVE_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:v})})
+      _origFetch(SAVE_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:v})})
       .then(async function(r){
         var data={};
         try{data=await r.json();}catch(e){}
