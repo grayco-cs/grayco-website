@@ -14,7 +14,8 @@
 <script>
 (async function(){
   var KEY='grayco-site-content-v3';
-  var FN='/.netlify/functions/save-content';
+  var GET_FN='/.netlify/functions/get-content';
+  var SAVE_FN='/.netlify/functions/save-content';
 
   function toast(msg,color){
     var t=document.createElement('div');
@@ -24,14 +25,16 @@
     setTimeout(function(){t.remove();},6000);
   }
 
-  // Load latest content from GitHub before app starts
+  // Load latest content via Netlify function (bypasses all caching)
   try{
-    var res=await fetch('https://api.github.com/repos/grayco-cs/grayco-website/contents/content.json',{headers:{'Accept':'application/vnd.github.v3.raw','Cache-Control':'no-cache'}});
+    var res=await fetch(GET_FN,{cache:'no-store'});
     if(res.ok){
       var text=await res.text();
       try{
         var p=JSON.parse(text);
-        if(p&&Object.keys(p).length>1){localStorage.setItem(KEY,text);}
+        if(p&&Object.keys(p).length>1){
+          localStorage.setItem(KEY,text);
+        }
       }catch(e){}
     }
   }catch(e){console.warn('[GrayCo] Cloud load failed:',e.message);}
@@ -41,13 +44,13 @@
   Storage.prototype.setItem=function(k,v){
     _orig.call(this,k,v);
     if(k===KEY){
-      fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:v})})
+      fetch(SAVE_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:v})})
       .then(async function(r){
         var data={};
         try{data=await r.json();}catch(e){}
-        if(r.ok && data.ok){
+        if(r.ok&&data.ok){
           toast('☁️ Saved to cloud!','#2e7d32');
-        } else {
+        }else{
           var reason=data.reason||data.error||('HTTP '+r.status);
           toast('❌ Cloud error: '+reason,'#c62828');
         }
