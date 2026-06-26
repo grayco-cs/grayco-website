@@ -1,5 +1,3 @@
-// GrayCo Website - Cloud Content Sync
-// Saves site content to GitHub so all devices stay in sync
 const https = require('https');
 
 function githubRequest(method, path, body, token) {
@@ -40,33 +38,22 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    // Not configured yet — fail silently so the site still works locally
-    return { statusCode: 200, headers, body: JSON.stringify({ ok: false, reason: 'GITHUB_TOKEN not configured' }) };
-  }
+  if (!token) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, reason: 'GITHUB_TOKEN not configured' }) };
 
   let content;
-  try {
-    content = JSON.parse(event.body || '{}').content;
-  } catch(e) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid body' }) };
-  }
+  try { content = JSON.parse(event.body || '{}').content; } 
+  catch(e) { return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid body' }) }; }
   if (!content) return { statusCode: 400, headers, body: JSON.stringify({ error: 'No content' }) };
 
   const filePath = '/repos/grayco-cs/grayco-website/contents/content.json';
 
-  // Get current file SHA (required by GitHub API to update a file)
   let sha;
   try {
     const getRes = await githubRequest('GET', filePath, null, token);
     if (getRes.status === 200) sha = JSON.parse(getRes.body).sha;
-  } catch(e) { /* file may not exist yet */ }
+  } catch(e) {}
 
-  // Write the updated content
-  const payload = {
-    message: 'Update site content',
-    content: Buffer.from(content).toString('base64')
-  };
+  const payload = { message: 'Update site content', content: Buffer.from(content).toString('base64') };
   if (sha) payload.sha = sha;
 
   try {
@@ -74,10 +61,14 @@ exports.handler = async (event) => {
     if (putRes.status === 200 || putRes.status === 201) {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     } else {
-      console.error('GitHub write failed:', putRes.status, putRes.body.substring(0, 200));
-      return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'GitHub write failed' }) };
+      // Return the actual GitHub error message
+      let ghError = 'unknown';
+      try { ghError = JSON.parse(putRes.body).message || putRes.body.substring(0,100); } catch(e) {}
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: ghError }) };
     }
   } catch(e) {
-    return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: e.message }) };
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: e.message }) };
   }
 };
+
+
