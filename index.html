@@ -16,13 +16,12 @@
   var KEY='grayco-site-content-v3';
   var FN='/.netlify/functions/save-content';
 
-  // Show a small toast message on screen
   function toast(msg,color){
     var t=document.createElement('div');
     t.innerText=msg;
-    t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:'+color+';color:#fff;padding:10px 20px;border-radius:8px;font-family:sans-serif;font-size:14px;z-index:99999;box-shadow:0 2px 8px rgba(0,0,0,0.3)';
+    t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:'+color+';color:#fff;padding:10px 24px;border-radius:8px;font-family:sans-serif;font-size:14px;z-index:99999;box-shadow:0 2px 8px rgba(0,0,0,0.3);max-width:90vw;text-align:center';
     document.body.appendChild(t);
-    setTimeout(function(){t.remove();},4000);
+    setTimeout(function(){t.remove();},6000);
   }
 
   // Load latest content from GitHub before app starts
@@ -43,10 +42,16 @@
     _orig.call(this,k,v);
     if(k===KEY){
       fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:v})})
-      .then(function(r){
-        if(r.ok){toast('☁️ Saved to cloud — all devices updated!','#2e7d32');}
-        else{toast('⚠️ Cloud save failed (saved locally only)','#c62828');}
-      }).catch(function(){toast('⚠️ Cloud save failed (saved locally only)','#c62828');});
+      .then(async function(r){
+        var data={};
+        try{data=await r.json();}catch(e){}
+        if(r.ok && data.ok){
+          toast('☁️ Saved to cloud!','#2e7d32');
+        } else {
+          var reason=data.reason||data.error||('HTTP '+r.status);
+          toast('❌ Cloud error: '+reason,'#c62828');
+        }
+      }).catch(function(e){toast('❌ Network error: '+e.message,'#c62828');});
     }
   };
 
