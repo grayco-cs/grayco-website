@@ -10,6 +10,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 </head>
 <body>
+<script>
+/* Contact form -> GrayCo CRM (Leads -> Lead Inbox). If the CRM cannot be reached, the old e-mail fallback opens. */
+(function(){
+  var URL='https://crm.grayco-cs.com/.netlify/functions/website-intake', tok='', got=0;
+  function getTok(){ return fetch(URL+'?form=1',{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){ if(j&&j.token){tok=j.token;got=Date.now();} }).catch(function(){}); }
+  getTok();
+  function note(msg,ok){ var t=document.createElement('div'); t.innerText=msg; t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:'+(ok?'#1f7a3a':'#8a1c1c')+';color:#fff;padding:12px 24px;border-radius:8px;font-family:sans-serif;font-size:15px;z-index:99999;box-shadow:0 2px 8px rgba(0,0,0,.3);max-width:90vw;text-align:center'; document.body.appendChild(t); setTimeout(function(){t.remove();},8000); }
+  window.gcLead=function(r,files,fallback){
+    r=r||{}; var n=(files&&files.length)||0;
+    var send=function(){
+      if(Date.now()-got>20*3600000||!tok) return getTok().then(post);
+      var wait=Math.max(0,3500-(Date.now()-got)); return new Promise(function(res){setTimeout(res,wait);}).then(post);
+    };
+    var post=function(){
+      return fetch(URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        name:r.name||'', email:r.email||'', phone:r.phone||'', type:r.projectType||'', service:r.projectType||'',
+        message:(r.message||'')+(n?'\n\n['+n+' photo(s) picked on the website - ask the customer to e-mail them]':''),
+        token:tok, page:location.href, via:'grayco-website contact form'})})
+      .then(function(x){ return x.json().catch(function(){return {};}).then(function(j){ return {ok:x.ok&&j.ok,j:j}; }); });
+    };
+    send().then(function(res){
+      if(res.ok){ note('Thank you! We got your message and will reach out soon.',true); return; }
+      fallback();
+    }).catch(function(){ fallback(); });
+  };
+})();
+</script>
 <div id="root"></div>
 <script>
 (async function(){
