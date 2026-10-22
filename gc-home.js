@@ -56,3 +56,42 @@
   }
   if (!place()) { var mo = new MutationObserver(function(){ if (place()) mo.disconnect(); }); mo.observe(document.documentElement, { childList: true, subtree: true }); setTimeout(function(){ mo.disconnect(); }, 30000); }
 })();
+/* ── patch SEO1: restoration first ──────────────────────────────────────────────────────────────────────────
+   Owner (10/22): lead with water, fire & storm damage restoration. Adds a 24/7 emergency call button in the hero
+   and a "#restoration" section right under it that links to the 21 restoration city pages. */
+(function(){
+  if (window.__gcRest) return; window.__gcRest = true;
+  var TEL = 'tel:+19015850944', PH = '(901) 585-0944';
+  var CITIES = ['Memphis', 'Bartlett', 'Germantown', 'Collierville', 'Cordova', 'Arlington', 'Lakeland'];
+  var SV = [['water-damage-mitigation', 'Water damage mitigation', '💧', 'Burst pipes, leaks and flooding: extraction, structural drying and moisture readings documented for your claim.'],
+    ['fire-damage-restoration', 'Fire & smoke damage restoration', '🔥', 'Board-up and roof tarping, smoke, soot and odor cleanup, drying of firefighting water — then the rebuild.'],
+    ['storm-damage-restoration', 'Storm damage restoration', '⛈', 'Emergency tarping, hail and wind damage, fallen trees — inspection, adjuster meetings and supplements.']];
+  var css = '.gx-emerg{display:inline-flex;align-items:center;gap:10px;margin:0 auto 22px;background:#b3261e;color:#fff!important;text-decoration:none;padding:15px 30px;font:700 13px Outfit,Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:0 8px 24px rgba(0,0,0,.3)}.gx-emerg:hover{background:#8f1d17}.gx-emerg-wrap{text-align:center;width:100%}' +
+    '#restoration{padding:90px 24px;background:#fff;color:#1b1640;font-family:Outfit,Arial,sans-serif}#restoration .rs-wrap{max-width:1100px;margin:0 auto}' +
+    '#restoration .rs-kick{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#b3261e;font-weight:700;margin:0 0 12px}#restoration h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clamp(32px,4vw,48px);line-height:1.1;margin:0 0 14px}' +
+    '#restoration .rs-lead{font-size:17px;line-height:1.7;color:#3a3858;max-width:780px}#restoration .rs-lic{display:inline-block;border:1px solid #b8902f;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;padding:6px 10px;margin:0 0 16px}' +
+    '#restoration .rs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:30px}#restoration .rs-card{border:1px solid #e6e2d8;padding:24px;box-shadow:0 12px 30px rgba(27,22,64,.08);min-width:0}' +
+    '#restoration .rs-card h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:26px;font-weight:600;margin:0 0 8px}#restoration .rs-card p{font-size:14px;line-height:1.65;color:#3a3858;margin:0 0 12px}' +
+    '#restoration .rs-cities{font-size:14px;line-height:1.9}#restoration .rs-cities a{color:#1b1640;font-weight:600}#restoration .rs-cta{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}' +
+    '@media(max-width:860px){#restoration{padding:64px 16px}#restoration .rs-grid{grid-template-columns:1fr}.gx-emerg{padding:14px 20px;letter-spacing:1px}}';
+  var sec = '<section id="restoration" aria-labelledby="rs-h"><div class="rs-wrap"><div class="rs-kick">24/7 emergency restoration</div>' +
+    '<h2 id="rs-h">Water, fire or storm damage? We answer day and night.</h2><div class="rs-lic">Licensed General Contractor – Unlimited · TN #85034</div>' +
+    '<p class="rs-lead">One licensed contractor from mitigation through full rebuild — no hand-off. We stop the damage, document it for your insurance claim, meet your adjuster, and rebuild your home in Memphis, Bartlett, Germantown, Collierville, Cordova, Arlington and Lakeland.</p>' +
+    '<div class="rs-grid">' + SV.map(function(s){
+      return '<div class="rs-card"><h3>' + s[2] + ' ' + s[1] + '</h3><p>' + s[3] + '</p><div class="rs-cities">' + CITIES.map(function(c){ return '<a href="/' + s[0] + '-' + c.toLowerCase() + '-tn/">' + c + '</a>'; }).join(' · ') + '</div></div>'; }).join('') + '</div>' +
+    '<div class="rs-cta"><a class="gx-emerg" style="margin:0" href="' + TEL + '">24/7 Emergency: call ' + PH + '</a><span style="font-size:14px;color:#3a3858">Also: <a href="/roofing-bartlett-tn/">Roofing</a> · <a href="/roof-repair-bartlett-tn/">Roof repair</a> · <a href="/remodeling-bartlett-tn/">Remodeling</a></span></div></div></section>';
+  var styled = false;
+  function place(){
+    var home = document.getElementById('home'); if (!home || !home.parentNode) return false;
+    if (!styled) { var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st); styled = true; }
+    if (!home.querySelector('.gx-emerg')) {
+      /* right above the hero's "Request a Quote" / "View our work" buttons */
+      var q = [].slice.call(home.querySelectorAll('button')).filter(function(b){ return /request a quote/i.test(b.textContent); })[0], row = q && q.parentNode;
+      if (row && row.parentNode) { var w = document.createElement('div'); w.className = 'gx-emerg-wrap'; w.innerHTML = '<a class="gx-emerg" href="' + TEL + '">🚨 24/7 Emergency: ' + PH + '</a>'; row.parentNode.insertBefore(w, row); }
+    }
+    if (!document.getElementById('restoration')) { var d = document.createElement('div'); d.innerHTML = sec; home.parentNode.insertBefore(d.firstChild, home.nextSibling); }
+    return true;
+  }
+  function start(){ place(); setInterval(place, 2000); try { new MutationObserver(function(){ if (!document.getElementById('restoration')) place(); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {} }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
