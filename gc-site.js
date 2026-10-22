@@ -62,3 +62,57 @@
   }
   window.GC = { send: send, attrib: function(){ return Object.assign({}, A); }, site: function(f){ if (window.GC_SITE) f(window.GC_SITE); else (window.GC_SITE_WAIT = window.GC_SITE_WAIT || []).push(f); } };
 })();
+/* ── patch ADDR2: GrayCo's address moves on a date, and a "News" link ──────────────────────────────────────────
+   Owner (10/22): at 4007 Broadway Rd for about one more week, then 4014 Broadway Rd. Before the switch day (Central
+   time; default 2026-10-29, the CRM's Admin → 🏢 Company address can move it) every page shows the current address,
+   from that day on the new one: text, <span data-gc-addr> / data-gc-street, the meta description and the JSON-LD. */
+(function(){
+  if (window.__gcAddr2) return; window.__gcAddr2 = true;
+  var CRM = 'https://crm.grayco-cs.com/.netlify/functions/', LK = 'gc_company_address';
+  var DEF = { current: '4007 Broadway Rd, Bartlett, TN 38135', next: '4014 Broadway Rd, Bartlett, TN 38135', switchOn: '2026-10-29' };
+  function s(v){ return v == null ? '' : String(v).trim(); }
+  function cfg(){
+    var c = { current: DEF.current, next: DEF.next, switchOn: DEF.switchOn }, v = null;
+    try { v = JSON.parse(localStorage.getItem(LK) || 'null'); } catch (e) {}
+    if (v && typeof v === 'object') { if (s(v.current)) c.current = s(v.current); if (s(v.next)) c.next = s(v.next); if (/^\d{4}-\d{2}-\d{2}$/.test(s(v.switchOn))) c.switchOn = s(v.switchOn); }
+    return c;
+  }
+  function day(d){ try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d); } catch (e) { return new Date(d.getTime() - 6 * 3600e3).toISOString().slice(0, 10); } }
+  function addr(when){ var c = cfg(); if (!c.next || !c.switchOn) return c.current; return day(when ? new Date(when) : new Date()) >= c.switchOn ? c.next : c.current; }
+  function street(a){ return s(a).split(',')[0]; }
+  function reEsc(x){ return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  var busy = false;
+  function apply(){
+    if (busy || !document.body) return; busy = true;
+    try {
+      var c = cfg(), a = addr(), st = street(a);
+      document.querySelectorAll('[data-gc-addr]').forEach(function(e){ if (e.textContent !== a) e.textContent = a; });
+      document.querySelectorAll('[data-gc-street]').forEach(function(e){ if (e.textContent !== st) e.textContent = st; });
+      var old = [c.current, c.next].map(street).filter(function(x){ return x && x !== st; });
+      if (old.length) {
+        var re = new RegExp(old.map(reEsc).join('|'), 'g');
+        var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n, hits = [];
+        while ((n = w.nextNode())) { var p = n.parentNode && n.parentNode.nodeName; if (p !== 'SCRIPT' && p !== 'STYLE' && re.test(n.nodeValue)) hits.push(n); re.lastIndex = 0; }
+        hits.forEach(function(x){ x.nodeValue = x.nodeValue.replace(re, st); });
+        document.querySelectorAll('meta[name="description"],meta[property="og:description"]').forEach(function(m){ var v = m.getAttribute('content') || ''; if (re.test(v)) m.setAttribute('content', v.replace(re, st)); re.lastIndex = 0; });
+        document.querySelectorAll('script[type="application/ld+json"]').forEach(function(x){ if (re.test(x.textContent)) x.textContent = x.textContent.replace(re, st); re.lastIndex = 0; });
+      }
+      newsLink();
+    } catch (e) {}
+    busy = false;
+  }
+  /* a "News" link where the home page lists its sections, and in its footer */
+  function newsLink(){
+    if (/^\/news\//.test(location.pathname) || document.querySelector('a[data-gc-news]')) return;
+    var navA = [].slice.call(document.querySelectorAll('nav a[href^="#"], header a[href^="#"]')).filter(function(x){ return x.offsetParent; });
+    if (navA.length) { var last = navA[navA.length - 1], c = last.cloneNode(false); c.setAttribute('href', '/news/'); c.setAttribute('data-gc-news', '1'); c.removeAttribute('aria-current'); c.textContent = 'News'; last.parentNode.insertBefore(c, last.nextSibling); }
+    var f = document.querySelector('footer');
+    if (f && !f.querySelector('a[href="/news/"]')) { var d = document.createElement('div'); d.style.cssText = 'margin-top:10px;text-align:center'; d.innerHTML = '<a href="/news/" data-gc-news="1" style="color:inherit;text-decoration:underline">GrayCo News</a>'; f.appendChild(d); }
+  }
+  window.GC_ADDRESS = { get: addr, config: cfg, apply: apply };
+  var t = null;
+  function soon(){ if (t) return; t = setTimeout(function(){ t = null; apply(); }, 250); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply); else apply();
+  try { new MutationObserver(function(){ if (!busy) soon(); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  try { fetch(CRM + 'mkt-public?company=1', { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){ if (j && j.ok && j.config) { localStorage.setItem(LK, JSON.stringify(j.config)); apply(); } }).catch(function(){}); } catch (e) {}
+})();
