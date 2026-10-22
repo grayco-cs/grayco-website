@@ -27,7 +27,7 @@
       return fetch(URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         name:r.name||'', email:r.email||'', phone:r.phone||'', type:r.projectType||'', service:r.projectType||'',
         message:(r.message||'')+(n?'\n\n['+n+' photo(s) picked on the website - ask the customer to e-mail them]':''),
-        token:tok, page:location.href, via:'grayco-website contact form'})})
+        token:tok, page:location.href, via:'grayco-website contact form', ref:(window.gcRefCode&&window.gcRefCode())||''})})
       .then(function(x){ return x.json().catch(function(){return {};}).then(function(j){ return {ok:x.ok&&j.ok,j:j}; }); });
     };
     send().then(function(res){
@@ -35,6 +35,127 @@
       fallback();
     }).catch(function(){ fallback(); });
   };
+})();
+</script>
+<script id="gc-referrals">
+/* Referral program (GrayCo CRM patch REF): the "Need a new kitchen and don't have the money?" section after Contact
+   (#referrals) — every friend a member refers earns them $100–$500 in GrayCo credit; credits stack and never expire. The join form posts to the CRM (website-intake, type "referral") with the same token flow as the
+   contact form; the CRM makes the member (their own link https://grayco-cs.com/?ref=R-XXXXXX) and, when they name a
+   friend, a GrayCo lead "Referred by <member>". If the CRM cannot be reached, an e-mail to office@ opens instead.
+   A visitor who arrives through a member's link (?ref=R-XXXXXX) is remembered, and the contact form sends that code. */
+(function(){
+  'use strict';
+  var URL = 'https://crm.grayco-cs.com/.netlify/functions/website-intake', tok = '', got = 0;
+  /* a member's link: ?ref=R-XXXXXX — kept for this visitor (30 days) */
+  var REF = '';
+  try { var m = /[?&]ref=(R-?[2-9A-HJ-NP-Z]{6})(?:[&#]|$)/i.exec(location.search || ''); if (m) { REF = 'R-' + m[1].toUpperCase().replace(/^R-?/, ''); localStorage.setItem('gc_ref', JSON.stringify({ c: REF, t: Date.now() })); } } catch (e) {}
+  try { if (!REF) { var v = JSON.parse(localStorage.getItem('gc_ref') || 'null'); if (v && v.c && Date.now() - v.t < 30 * 864e5) REF = v.c; } } catch (e) {}
+  window.gcRefCode = function(){ return REF; };
+  function getTok(){ return fetch(URL + '?form=1', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){ if (j && j.token) { tok = j.token; got = Date.now(); } }).catch(function(){}); }
+  var C = { navy: '#141463', dark: '#0b0b2e', gold: '#d4a843', ser: "'Cormorant Garamond', serif", sans: "'Outfit', sans-serif" };
+  var css = document.createElement('style');
+  css.textContent = [
+    '#referrals{padding:110px 24px;background:' + C.dark + ';color:#fff;font-family:' + C.sans + '}',
+    '#referrals .rf-wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}',
+    '#referrals .rf-kick{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:' + C.gold + ';font-weight:600;margin:0 0 14px}',
+    '#referrals h2{font-family:' + C.ser + ';font-weight:400;font-size:clamp(34px,4.4vw,52px);line-height:1.08;margin:0 0 18px}',
+    '#referrals h2 em,#referrals .rf-lead em{color:' + C.gold + ';font-style:italic}',
+    '#referrals .rf-lead{font-size:17px;color:rgba(255,255,255,.85)}#referrals .rf-lead b{color:#fff;font-weight:600}',
+    '#referrals .rf-uses{margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:' + C.gold + ';line-height:2}',
+    '#referrals p{color:rgba(255,255,255,.72);font-weight:300;line-height:1.75;font-size:15px;margin:0 0 16px}',
+    '#referrals ol{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:16px}',
+    '#referrals li{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6}',
+    '#referrals li b{display:block;color:#fff;font-weight:600;font-size:15px}',
+    '#referrals .rf-n{width:40px;height:40px;border:1px solid ' + C.gold + ';color:' + C.gold + ';display:flex;align-items:center;justify-content:center;font-family:' + C.ser + ';font-size:20px}',
+    '#referrals .rf-card{background:#fff;color:' + C.navy + ';padding:34px;box-shadow:0 20px 50px rgba(0,0,0,.35);min-width:0}',
+    '#referrals .rf-card h3{font-family:' + C.ser + ';font-size:28px;font-weight:500;margin:0 0 6px}',
+    '#referrals .rf-card p.rf-sub{font-size:13px;color:#666;margin:0 0 18px}',
+    '#referrals label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#8888a0;font-weight:600;margin:12px 0 6px}',
+    '#referrals input,#referrals select,#referrals textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #dddde8;font:14px ' + C.sans + ';color:' + C.navy + ';background:#fff;outline:none}',
+    '#referrals input:focus,#referrals select:focus,#referrals textarea:focus{border-color:' + C.gold + '}',
+    '#referrals .rf-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}',
+    '#referrals .rf-sep{margin:22px 0 4px;padding-top:16px;border-top:1px solid #eee;font-family:' + C.ser + ';font-size:20px}',
+    '#referrals button.rf-go{margin-top:20px;width:100%;padding:17px;border:0;background:' + C.navy + ';color:#fff;font:700 13px ' + C.sans + ';letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .3s}',
+    '#referrals button.rf-go:hover{background:' + C.gold + '}#referrals button.rf-go[disabled]{opacity:.6;cursor:default}',
+    '#referrals .rf-card p.rf-fine{font-size:11px;color:#888;line-height:1.6;margin:14px 0 0;font-weight:400}',
+    '#referrals .rf-err{color:#a11;font-size:13px;margin:10px 0 0;min-height:1em}',
+    '#referrals .rf-done{text-align:center;padding:10px 0}',
+    '#referrals .rf-link{margin:16px 0;padding:12px;border:2px dashed ' + C.gold + ';font:600 14px ' + C.sans + ';word-break:break-all;color:' + C.navy + '}',
+    '#referrals .rf-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}',
+    '@media(max-width:860px){#referrals{padding:80px 16px}#referrals .rf-wrap{grid-template-columns:1fr;gap:36px}#referrals .rf-card{padding:24px 18px}#referrals .rf-two{grid-template-columns:1fr}}'
+  ].join('\n');
+  document.head.appendChild(css);
+  function el(html){ var d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var FORM = '<form class="rf-form" novalidate>'
+    + '<div class="rf-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>'
+    + '<label for="rf-name">Your name *</label><input id="rf-name" name="name" autocomplete="name" required>'
+    + '<div class="rf-two"><div><label for="rf-email">Your e-mail</label><input id="rf-email" name="email" type="email" autocomplete="email"></div><div><label for="rf-phone">Your phone</label><input id="rf-phone" name="phone" type="tel" autocomplete="tel"></div></div>'
+    + '<label for="rf-how">How do you know GrayCo?</label><select id="rf-how" name="how_know"><option value="">Choose one</option><option>GrayCo customer</option><option>Friend or family of a customer</option><option>Neighbor of a GrayCo job</option><option>Real estate / property pro</option><option>Other</option></select>'
+    + '<div class="rf-sep">Referring someone now? <span style="font-size:14px;color:#888">(optional)</span></div>'
+    + '<div class="rf-two"><div><label for="rf-fname">Their name</label><input id="rf-fname" name="referred_name"></div><div><label for="rf-fphone">Their phone</label><input id="rf-fphone" name="referred_phone" type="tel"></div></div>'
+    + '<label for="rf-femail">Their e-mail</label><input id="rf-femail" name="referred_email" type="email">'
+    + '<label for="rf-fnote">What do they need?</label><textarea id="rf-fnote" name="referred_note" rows="2" placeholder="Roof, remodel, storm damage…"></textarea>'
+    + '<button class="rf-go" type="submit">Join the referral program</button><div class="rf-err" role="alert"></div>'
+    + '<p class="rf-fine">When someone you refer hires GrayCo, $100–$500 of GrayCo credit (based on the size of their project) is added to your account. Credits stack and never expire, and can be used toward any GrayCo work. You can also turn some or all of your credit into a one-time digital gift code for family and friends — once a code is used, it no longer works.</p></form>';
+  var SEC = '<section id="referrals" aria-labelledby="rf-h"><div class="rf-wrap"><div>'
+    + '<div class="rf-kick">GrayCo Referral Program</div><h2 id="rf-h">Need a new kitchen and don’t have the money?</h2>'
+    + '<p class="rf-lead">Join the GrayCo Referral Program — every friend you refer earns you <em>$100–$500 in GrayCo credit</em>. Stack your credits and put them toward your kitchen, bathroom, floors, roof, maintenance or remodel. <b>Credits never expire.</b></p>'
+    + '<ol><li><span class="rf-n">1</span><span><b>Join free</b>It takes a minute — you get your own referral link to share.</span></li>'
+    + '<li><span class="rf-n">2</span><span><b>Refer friends, family and neighbors</b>Through the form here or your link. When they hire GrayCo, you earn $100–$500 in credit (based on the size of their project).</span></li>'
+    + '<li><span class="rf-n">3</span><span><b>Stack it and use it</b>Your credits add up in one balance. Use them on any GrayCo work — or turn some into a one-time gift code for family and friends.</span></li></ol>'
+    + '<div class="rf-uses">Kitchens · Bathrooms · Floors · Roofs · Remodels · Maintenance · New construction</div>'
+    + '</div><div class="rf-card"><h3>Join the referral program</h3><p class="rf-sub">Free to join. No obligation. Credits never expire.</p>' + FORM + '</div></div></section>';
+  function val(f, n){ var x = f.querySelector('[name="' + n + '"]'); return x ? String(x.value || '').trim() : ''; }
+  function fallback(f){
+    var body = ['Referral program sign-up', '', 'Name: ' + val(f, 'name'), 'E-mail: ' + val(f, 'email'), 'Phone: ' + val(f, 'phone'), 'How they know GrayCo: ' + val(f, 'how_know'), '', 'Referring: ' + val(f, 'referred_name'), 'Their phone: ' + val(f, 'referred_phone'), 'Their e-mail: ' + val(f, 'referred_email'), 'What they need: ' + val(f, 'referred_note')].join('\n');
+    window.open('mailto:office@grayco-cs.com?subject=' + encodeURIComponent('Referral program — ' + val(f, 'name')) + '&body=' + encodeURIComponent(body), '_blank');
+  }
+  function done(card, j){
+    var link = (j && j.member && j.member.link) || '';
+    card.innerHTML = '<div class="rf-done"><h3>You are in! Thank you.</h3><p class="rf-sub" style="margin-top:8px">' + esc(j && j.message ? j.message.replace(/ Share your link:.*$/, '') : 'Welcome to the GrayCo referral program.') + '</p>'
+      + (link ? '<div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#8888a0;font-weight:600">Your referral link</div><div class="rf-link">' + esc(link) + '</div><button class="rf-go" type="button" data-copy="1">Copy my link</button>' : '') + '</div>';
+    var b = card.querySelector('[data-copy]');
+    if (b) b.addEventListener('click', function(){ try { navigator.clipboard.writeText(link).then(function(){ b.textContent = 'Copied ✓'; }); } catch (e) {} });
+  }
+  function wire(sec){
+    var f = sec.querySelector('form.rf-form'), err = sec.querySelector('.rf-err'), go = sec.querySelector('button.rf-go');
+    var reset = function(){ go.disabled = false; go.textContent = 'Join the referral program'; };
+    f.addEventListener('submit', function(ev){
+      ev.preventDefault(); err.textContent = '';
+      if (!val(f, 'name')) { err.textContent = 'Please add your name.'; return; }
+      if (!val(f, 'email') && val(f, 'phone').replace(/\D/g, '').length < 10) { err.textContent = 'Please add your e-mail or phone so we can reach you.'; return; }
+      if (val(f, 'referred_name') && !val(f, 'referred_email') && val(f, 'referred_phone').replace(/\D/g, '').length < 10) { err.textContent = 'Add your friend’s phone or e-mail so we can reach them.'; return; }
+      go.disabled = true; go.textContent = 'Sending…';
+      var post = function(){
+        var b = { type: 'referral', token: tok, page: location.href, via: 'grayco-website referral program', ref: REF, website: val(f, 'website') };
+        ['name', 'email', 'phone', 'how_know', 'referred_name', 'referred_phone', 'referred_email', 'referred_note'].forEach(function(n){ b[n] = val(f, n); });
+        return fetch(URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }).then(function(x){ return x.json().catch(function(){ return {}; }).then(function(j){ return { ok: x.ok && j.ok, status: x.status, j: j }; }); });
+      };
+      var ready = (!tok || Date.now() - got > 20 * 3600000) ? getTok() : new Promise(function(res){ setTimeout(res, Math.max(0, 3500 - (Date.now() - got))); });
+      ready.then(post).then(function(r){
+        if (r.ok) { done(sec.querySelector('.rf-card'), r.j); return; }
+        if (r.status === 400 && r.j && r.j.field) { err.textContent = r.j.error || 'Please check the form.'; reset(); return; }
+        reset(); fallback(f);
+      }).catch(function(){ reset(); fallback(f); });
+    });
+  }
+  function place(){
+    if (document.getElementById('referrals')) return true;
+    var c = document.getElementById('contact'); if (!c || !c.parentNode) return false;
+    var sec = el(SEC); c.parentNode.insertBefore(sec, c.nextSibling); wire(sec);
+    if (!tok) getTok();
+    if (/#referrals$/.test(location.hash || '')) setTimeout(function(){ try { sec.scrollIntoView({ behavior: 'smooth' }); } catch (e) {} }, 300);
+    return true;
+  }
+  function start(){
+    if (place()) return;
+    var mo = new MutationObserver(function(){ if (place()) mo.disconnect(); });
+    mo.observe(document.getElementById('root') || document.body, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  /* React may redraw the page (content edits): put the section back if it disappears */
+  setInterval(function(){ if (!document.getElementById('referrals')) place(); }, 2000);
 })();
 </script>
 <div id="root"></div>
