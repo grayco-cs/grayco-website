@@ -1041,6 +1041,14 @@ async function getFormToken(){
   try { const r = await fetch(CRM_INTAKE + '?form=1', {cache:'no-store'}); const j = await r.json(); if (j && j.token) { formToken = j.token; formTokenAt = Date.now(); } } catch(e){}
   return formToken;
 }
+/* the CRM only takes a form token that is 3+ seconds old (anti-spam): fetch it early, and if it is still fresh, wait the rest */
+async function readyFormToken(){
+  const t = await getFormToken(); const age = Date.now() - formTokenAt;
+  if (t && age < 3600) await new Promise(r => setTimeout(r, 3600 - age));
+  return t;
+}
+document.addEventListener('focusin', e => { if (e.target && e.target.closest && e.target.closest('form[name=contact]')) getFormToken(); });
+if (liveSite && document.readyState) setTimeout(() => { try { if (document.querySelector('form[name=contact]')) getFormToken(); } catch(e){} }, 1500);
 function liveSite(){ return location.hostname.endsWith('grayco-cs.com') || location.hostname.endsWith('netlify.app'); }
 async function sendMail(ev){
   ev.preventDefault();
@@ -1060,7 +1068,7 @@ async function sendMail(ev){
     name: d.get('name'), email: d.get('email'), phone: d.get('phone'), company: d.get('company'),
     city, state: st, message: (need === 'sub' ? 'SUBCONTRACTOR INQUIRY. ' : need === 'div9' ? 'DIVISION 9 / EIFS BID. ' : '') + String(d.get('message') || '') + (loc ? '\n\nProject location: ' + loc : ''),
     website: d.get('website'), page: location.href.slice(0, 300), via: 'grayco-cs.com contact form',
-    token: await getFormToken()
+    token: await readyFormToken()
   }, attribution());
   let ok = false, error = '';
   try {
