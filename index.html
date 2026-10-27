@@ -822,7 +822,7 @@ function countUpStats(){
    ============================================================ */
 /* the landing pages (landing/pages.mjs — a page of its own per service and per town, built on deploy) */
 const LANDING_SERVICES = [['water-damage-restoration','Water damage restoration'],['fire-damage-restoration','Fire damage restoration'],['insurance-restoration','Insurance restoration'],['commercial-construction','Commercial construction'],['home-remodeling','Home remodeling']];
-const LANDING_TOWNS = [['memphis','Memphis, TN'],['bartlett','Bartlett, TN'],['collierville','Collierville, TN'],['cordova','Cordova, TN'],['germantown','Germantown, TN']];
+const LANDING_TOWNS = [['memphis','Memphis, TN'],['bartlett','Bartlett, TN'],['collierville','Collierville, TN'],['cordova','Cordova, TN'],['germantown','Germantown, TN'],['fayette-county','Fayette County, TN'],['tipton-county','Tipton County, TN'],['desoto-county','DeSoto County, MS'],['marshall-county','Marshall County, MS'],['crittenden-county','Crittenden County, AR']];
 function landingFor(title){ const t = String(title||'').toLowerCase();
   return /water|mitigation/.test(t) ? 'water-damage-restoration' : /fire/.test(t) ? 'fire-damage-restoration' : /insurance|restoration/.test(t) ? 'insurance-restoration' : /commercial/.test(t) ? 'commercial-construction' : /residential|remodel|renovat/.test(t) ? 'home-remodeling' : ''; }
 function render(){

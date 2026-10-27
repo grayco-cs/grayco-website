@@ -205,5 +205,55 @@ export const TOWNS = [
     projects: ['Kitchen and Bathroom remodels', 'Custom remodel', 'Winter Storm Restoration', 'Kitchen fire'],
     services: ['home-remodeling', 'water-damage-restoration', 'insurance-restoration', 'fire-damage-restoration'],
     near: ['collierville', 'cordova', 'memphis', 'bartlett']
+  },
+  {
+    slug: 'fayette-county', town: 'Fayette County', state: 'TN',
+    title: 'Fayette County TN Contractor | Restoration & Remodeling | GrayCo',
+    desc: 'Water and fire damage restoration, insurance claims, remodeling and commercial work in Fayette County — Oakland, Somerville, Rossville and Piperton. Licensed TN GC #85034.',
+    h1: 'Restoration and remodeling in Fayette County',
+    intro: 'Fayette County is next door to our Bartlett office. We work in Oakland, Somerville, Rossville, Piperton and the rest of the county: 24/7 water emergencies, fire and storm damage handled with your insurance company, remodels, and commercial projects for businesses, schools and public owners.',
+    projects: [],
+    services: ['water-damage-restoration', 'fire-damage-restoration', 'insurance-restoration', 'home-remodeling', 'commercial-construction'],
+    near: ['bartlett', 'collierville', 'tipton-county', 'memphis']
+  },
+  {
+    slug: 'tipton-county', town: 'Tipton County', state: 'TN',
+    title: 'Tipton County TN Contractor | Restoration & Remodeling | GrayCo',
+    desc: 'Covington, Munford, Atoka, Brighton and Drummonds: water and fire damage restoration, insurance claims, remodels and commercial work. Licensed TN GC #85034.',
+    h1: 'Restoration and remodeling in Tipton County',
+    intro: 'From our Bartlett office, Tipton County is a short drive up the road. We serve Covington, Munford, Atoka, Brighton and Drummonds: 24/7 water emergencies, storm and fire damage handled with your insurance company, home remodels and commercial work.',
+    projects: [],
+    services: ['water-damage-restoration', 'fire-damage-restoration', 'insurance-restoration', 'home-remodeling', 'commercial-construction'],
+    near: ['bartlett', 'fayette-county', 'memphis', 'cordova']
+  },
+  {
+    slug: 'desoto-county', town: 'DeSoto County', state: 'MS',
+    title: 'DeSoto County MS Contractor | Restoration & Remodeling | GrayCo',
+    desc: 'Southaven, Olive Branch, Horn Lake, Hernando and Walls: water and fire damage restoration, insurance claims, remodels and commercial work. Licensed MS contractor #27769.',
+    h1: 'Restoration and remodeling in DeSoto County, Mississippi',
+    intro: 'GrayCo is licensed in Mississippi and works across DeSoto County — Southaven, Olive Branch, Horn Lake, Hernando and Walls: 24/7 water emergencies, fire and storm damage handled with your insurance company, remodels and commercial finish-outs.',
+    projects: [],
+    services: ['water-damage-restoration', 'fire-damage-restoration', 'insurance-restoration', 'home-remodeling', 'commercial-construction'],
+    near: ['memphis', 'germantown', 'collierville', 'marshall-county']
+  },
+  {
+    slug: 'marshall-county', town: 'Marshall County', state: 'MS',
+    title: 'Marshall County MS Contractor | Restoration & Remodeling | GrayCo',
+    desc: 'Holly Springs, Byhalia and Potts Camp: water and fire damage restoration, insurance claims, remodels and commercial work. Licensed MS contractor #27769.',
+    h1: 'Restoration and remodeling in Marshall County, Mississippi',
+    intro: 'Next to DeSoto County, we serve Holly Springs, Byhalia, Potts Camp and the rest of Marshall County: water and fire damage restoration with your insurance company, remodels and commercial work, by a Mississippi-licensed contractor.',
+    projects: [],
+    services: ['water-damage-restoration', 'fire-damage-restoration', 'insurance-restoration', 'home-remodeling', 'commercial-construction'],
+    near: ['desoto-county', 'fayette-county', 'collierville', 'memphis']
+  },
+  {
+    slug: 'crittenden-county', town: 'Crittenden County', state: 'AR',
+    title: 'West Memphis AR Contractor | Crittenden County | GrayCo',
+    desc: 'West Memphis, Marion and Earle: water and fire damage restoration, insurance claims, remodels and commercial work. Licensed Arkansas contractor #0486990627.',
+    h1: 'Restoration and remodeling in Crittenden County, Arkansas',
+    intro: 'Just across the river, GrayCo is licensed in Arkansas and works in West Memphis, Marion, Earle and the rest of Crittenden County: water and fire damage restoration with your insurance company, remodels and commercial projects.',
+    projects: [],
+    services: ['water-damage-restoration', 'fire-damage-restoration', 'insurance-restoration', 'home-remodeling', 'commercial-construction'],
+    near: ['memphis', 'desoto-county', 'bartlett', 'cordova']
   }
 ];
