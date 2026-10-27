@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>GrayCo News | GrayCo Construction Services, Bartlett TN</title>
+<meta name="description" content="GrayCo News: monthly home tips, finished projects around Memphis and Bartlett, and the GrayCo referral program from GrayCo Construction Services."/>
+<link rel="canonical" href="https://grayco-cs.com/news/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="GrayCo News"/>
+<meta property="og:url" content="https://grayco-cs.com/news/"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="/gc-site.js"></script>
+<!-- patch ADDR2: every newsletter an admin approves in the CRM (Marketing → 📰 Newsletter) is listed here; an admin can take
+     one off. Posts come from the CRM's public door (title, date, summary, cleaned body, pictures; no personal data). -->
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Outfit,Arial,sans-serif;color:#1b1640;background:#fff;line-height:1.6}
+a{color:#1b1640}.top{background:#1b1640;color:#fff;padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.top a{color:#fff;text-decoration:none}.top b{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;font-weight:500}.top .ph{margin-left:auto;background:#b8902f;color:#fff;padding:8px 14px;font-weight:700}
+.hero{background:#f6f4ef;padding:56px 16px}.wrap{max-width:860px;margin:0 auto}.kick{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#b8902f;font-weight:600}
+h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:400;font-size:clamp(34px,5vw,54px);line-height:1.08;margin:10px 0 14px}h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500}h2{font-size:30px;margin:0 0 8px}
+.sec{padding:44px 16px}.post{border-bottom:1px solid #e6e2d8;padding:24px 0;display:grid;grid-template-columns:1fr;gap:12px}.post.img{grid-template-columns:200px 1fr}.post img{width:100%;height:140px;object-fit:cover}
+.post h2 a{text-decoration:none}.post h2 a:hover{text-decoration:underline}.date{font-size:13px;color:#8888a0;letter-spacing:1px;text-transform:uppercase}
+.body{font-size:17px}.body img{max-width:100%;height:auto;display:block;margin:14px 0}.body h3{font-size:26px;margin:28px 0 6px;color:#1b1640}
+.btn{display:inline-block;margin-top:14px;background:#b8902f;color:#fff;border:none;padding:13px 22px;font:700 13px Outfit,Arial,sans-serif;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none}
+.sub{background:#1b1640;color:#fff;padding:26px;margin:36px 0 0}.sub h2{color:#fff}.sub p{color:#c9c6dc;margin:0 0 10px}.sub .row{display:flex;gap:8px;flex-wrap:wrap}.sub input{flex:1;min-width:180px;padding:12px;border:0;font:15px Outfit,Arial,sans-serif}
+.sub .hp{position:absolute;left:-9999px;opacity:0}.ok{background:#f0fdf4;color:#166534;padding:10px;margin-top:10px;font-weight:600}.err{color:#fecaca;margin-top:8px;font-weight:600}
+.muted{color:#55626F}.foot{background:#1b1640;color:#c9c6dc;text-align:center;padding:26px 16px;font-size:13px}.foot a{color:#fff}
+@media(max-width:640px){.post.img{grid-template-columns:1fr}.post img{height:180px}.top .ph{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="top"><a href="/" aria-label="GrayCo Construction Services home"><img src="/gc-logo-white.png" alt="GrayCo Construction Services" width="113" height="64" style="height:64px;width:auto;display:block"></a><a href="/water-damage-mitigation-bartlett-tn/">Water damage</a><a href="/fire-damage-restoration-bartlett-tn/">Fire damage</a><a href="/storm-damage-restoration-bartlett-tn/">Storm damage</a><a href="/news/">News</a><a class="ph" href="tel:+19015850944">(901) 585-0944</a></div>
+<section class="hero"><div class="wrap"><div class="kick">GrayCo News</div><h1 id="h1">News from GrayCo</h1><p class="muted" id="lead">Home tips for every season, the work our crews finished around Memphis and Bartlett, and the GrayCo referral program.</p></div></section>
+<section class="sec"><div class="wrap">
+<div id="out"><p class="muted">Loading…</p></div>
+<div class="sub" id="signup"><h2>Get GrayCo News by e-mail</h2><p>One e-mail a month. Unsubscribe any time with one click.</p>
+<div class="row"><input id="ns-email" type="email" placeholder="Your e-mail" autocomplete="email"><input id="ns-name" type="text" placeholder="First name (optional)" autocomplete="given-name"><input class="hp" id="ns-web" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn" id="ns-go" type="button" style="margin-top:0">Sign up</button></div><div id="ns-out"></div></div>
+</div></section>
+<div class="foot">GrayCo Construction Services · <span data-gc-addr>4007 Broadway Rd, Bartlett, TN 38135</span> · <a href="tel:+19015850944">(901) 585-0944</a> · <a href="/">grayco-cs.com</a></div>
+<script>
+(function(){
+  var API = 'https://crm.grayco-cs.com/.netlify/functions/mkt-public', SITE = 'https://grayco-cs.com';
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function nice(d){ var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ''); if (!m) return ''; return new Date(+m[1], +m[2] - 1, +m[3], 12).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); }
+  function slugNow(){ var q = new URLSearchParams(location.search).get('p'); if (q) return q; var m = /^\/posts\/([a-z0-9-]+)\/?$/i.exec(location.pathname); return m ? m[1] : ''; }
+  function link(sl){ return '/posts/?p=' + encodeURIComponent(sl); }
+  function meta(sel, attr, v){ var m = document.querySelector(sel); if (m) m.setAttribute(attr, v); }
+  /* the CRM cleaned the body already; this keeps only plain tags again, in case */
+  function safe(h){
+    var t = document.createElement('template'); t.innerHTML = String(h || '');
+    var OK = { P: 1, H2: 1, H3: 1, H4: 1, UL: 1, OL: 1, LI: 1, B: 1, STRONG: 1, I: 1, EM: 1, BR: 1, A: 1, IMG: 1, BLOCKQUOTE: 1 };
+    (function walk(n){ [].slice.call(n.childNodes).forEach(function(c){
+      if (c.nodeType === 1) {
+        if (!OK[c.nodeName]) { if (/^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|FORM)$/.test(c.nodeName)) { c.remove(); return; } walk(c); while (c.firstChild) c.parentNode.insertBefore(c.firstChild, c); c.remove(); return; }
+        [].slice.call(c.attributes).forEach(function(a){ var keep = (c.nodeName === 'A' && a.name === 'href' && /^https:\/\//i.test(a.value)) || (c.nodeName === 'IMG' && ((a.name === 'src' && /^https:\/\//i.test(a.value)) || a.name === 'alt' || a.name === 'loading')); if (!keep) c.removeAttribute(a.name); });
+        if (c.nodeName === 'A') c.setAttribute('rel', 'noopener');
+        if (c.nodeName === 'IMG' && !c.getAttribute('src')) { c.remove(); return; }
+        walk(c);
+      } else if (c.nodeType !== 3) c.remove();
+    }); })(t.content);
+    var d = document.createElement('div'); d.appendChild(t.content); return d.innerHTML;
+  }
+  var out = document.getElementById('out'), sl = slugNow();
+  function fail(){ out.innerHTML = '<p class="muted">News could not be loaded right now. Call us at <a href="tel:+19015850944">(901) 585-0944</a>.</p>'; }
+  if (sl) {
+    fetch(API + '?news=' + encodeURIComponent(sl)).then(function(r){ return r.status === 404 ? { notFound: true } : r.json(); }).then(function(j){
+      if (j.notFound || !j.post) { document.title = 'Not found | GrayCo News'; out.innerHTML = '<p>This post is not on GrayCo News any more. <a href="/news/">See all news</a>.</p>'; meta('meta[name="description"]', 'content', 'GrayCo News'); return; }
+      var p = j.post;
+      document.title = p.title + ' | GrayCo News — GrayCo Construction Services';
+      meta('meta[name="description"]', 'content', p.summary || p.title); meta('link[rel="canonical"]', 'href', SITE + link(p.slug));
+      meta('meta[property="og:title"]', 'content', p.title); meta('meta[property="og:url"]', 'content', SITE + link(p.slug));
+      document.getElementById('h1').textContent = p.title; document.getElementById('lead').textContent = nice(p.date);
+      out.innerHTML = '<article class="body">' + safe(p.html) + '</article>' + (p.cta ? '<a class="btn" href="' + esc(p.cta.url) + '">' + esc(p.cta.label || 'Book a free inspection') + '</a>' : '') + '<p style="margin-top:28px"><a href="/news/">← All GrayCo News</a></p>';
+      var ld = document.createElement('script'); ld.type = 'application/ld+json';
+      ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'NewsArticle', headline: p.title, datePublished: p.date, image: p.images && p.images.length ? p.images : undefined, mainEntityOfPage: SITE + link(p.slug), publisher: { '@type': 'Organization', name: 'GrayCo Construction Services' } });
+      document.head.appendChild(ld);
+    }).catch(fail);
+  } else {
+    fetch(API + '?news=1').then(function(r){ return r.json(); }).then(function(j){
+      var l = (j && j.posts) || [];
+      if (!l.length) { out.innerHTML = '<p class="muted">The first issue is on its way. Sign up below to get it by e-mail.</p>'; return; }
+      out.innerHTML = l.map(function(p){ return '<div class="post' + (p.image ? ' img' : '') + '">' + (p.image ? '<a href="' + link(p.slug) + '"><img src="' + esc(p.image) + '" alt="" loading="lazy"></a>' : '') +
+        '<div><div class="date">' + esc(nice(p.date)) + '</div><h2><a href="' + link(p.slug) + '">' + esc(p.title) + '</a></h2><p>' + esc(p.summary) + '</p><a href="' + link(p.slug) + '">Read more →</a></div></div>'; }).join('');
+    }).catch(fail);
+  }
+  document.getElementById('ns-go').onclick = function(){
+    var b = this, o = document.getElementById('ns-out'), e = document.getElementById('ns-email').value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e)) { o.innerHTML = '<div class="err">Please enter your e-mail.</div>'; return; }
+    b.disabled = true;
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op: 'news_signup', email: e, name: document.getElementById('ns-name').value, website: document.getElementById('ns-web').value }) })
+      .then(function(r){ return r.json(); }).then(function(j){ b.disabled = false; o.innerHTML = j && j.ok ? '<div class="ok">' + esc(j.message || 'Thank you — you are on GrayCo News.') + '</div>' : '<div class="err">' + esc((j && j.error) || 'Not sent — please try again.') + '</div>'; })
+      .catch(function(){ b.disabled = false; o.innerHTML = '<div class="err">Not sent — please try again.</div>'; });
+  };
+})();
+</script>
+</body>
+</html>
