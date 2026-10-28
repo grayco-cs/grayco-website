@@ -39,7 +39,8 @@
 [[redirects]]
   from = "/review"
   to = "/.netlify/functions/google-reviews?go=write"
-  status = 200
+  status = 302
+  force = true
 
 [[redirects]]
   from = "/README.md"
