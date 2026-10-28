@@ -35,6 +35,12 @@
   to = "/pages/contact.html"
   status = 200
 
+# /review → Google's "write a review" box for GrayCo (for QR codes, cards, e-mails, trucks)
+[[redirects]]
+  from = "/review"
+  to = "/.netlify/functions/google-reviews?go=write"
+  status = 200
+
 [[redirects]]
   from = "/README.md"
   to = "/404.html"
