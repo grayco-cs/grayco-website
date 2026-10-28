@@ -55,7 +55,7 @@ details summary{font-weight:700;color:var(--ink);cursor:pointer}details p{margin
 footer{background:var(--ink);color:#D9D7EC;padding:36px 0;font-size:14px}footer a{color:#fff}footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
 footer h4{color:#fff;margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em}footer ul{list-style:none;padding:0;margin:0}footer li{margin:4px 0}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
-.bar a{display:flex;align-items:center;justify-content:center;gap:6px;padding:15px 8px;font-weight:700;text-decoration:none;color:#fff;background:var(--accent)}.bar a+a{background:var(--ink)}
+.bar a{display:flex;align-items:center;justify-content:center;gap:6px;padding:15px 8px;white-space:nowrap;font-size:15px;font-weight:700;text-decoration:none;color:#fff;background:var(--accent)}.bar a+a{background:var(--ink)}
 @media (min-width:901px){.bar{display:none}body{padding-bottom:0}}
 .crumbs{font-size:13px;color:#B9B6D8;margin:0 0 6px}.crumbs a{color:#B9B6D8}
 `;
@@ -141,7 +141,7 @@ ${faqs.length ? `<section><div class="w"><h2 class="s">Questions we hear</h2>${f
 <div><h4>Services</h4><ul>${all.filter(x => x.kind !== 'town').map(x => `<li><a href="/${x.slug}">${esc(x.serviceType)}</a></li>`).join('')}</ul></div>
 <div><h4>Areas we serve</h4><ul>${all.filter(x => x.kind === 'town').map(x => `<li><a href="/${x.slug}">${esc(x.town)}, ${esc(x.state)}</a></li>`).join('')}</ul></div>
 </div></footer>
-<div class="bar"><a href="tel:${p.emergency ? eHref : phoneHref}">📞 ${p.emergency ? 'Call 24/7' : 'Call now'}</a><a href="#estimate">Free estimate</a></div>
+<div class="bar"><a href="tel:${p.emergency ? eHref : phoneHref}">📞 ${p.emergency ? 'Call 24/7 ' + esc(ePhone) : 'Call ' + esc(phone)}</a><a href="#estimate">Free estimate</a></div>
 </body></html>
 `;
 }
