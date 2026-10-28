@@ -512,6 +512,17 @@
   .callbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
   .callbar a{display:flex;align-items:center;justify-content:center;padding:15px 8px;font-weight:700;text-decoration:none;color:#fff;background:var(--accent)}
   .callbar a+a{background:var(--ink)}
+  .callpop{position:fixed;inset:0;z-index:70;background:rgba(10,12,40,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+  .callpop[hidden]{display:none}
+  .cp-card{position:relative;background:#fff;color:var(--ink);border-radius:10px;width:100%;max-width:420px;padding:20px 18px 14px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+  .cp-h{font-weight:800;font-size:17px;margin:0 0 12px}
+  .cp-x{position:absolute;top:10px;right:10px;border:0;background:none;font-size:20px;line-height:1;padding:6px;cursor:pointer;color:var(--ink)}
+  .cp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+  .cp-row[hidden]{display:none}
+  .cp-k{font-size:13px;color:var(--mute);font-weight:600}
+  .cp-two{display:flex;gap:8px}
+  .cp-num,.cp-sms{display:inline-block;background:var(--accent);color:#fff;font-weight:800;padding:11px 14px;border-radius:6px;text-decoration:none;white-space:nowrap;font-size:15px}
+  .cp-sms{background:var(--ink)}
   @media (max-width:820px){.callbar{display:grid}body{padding-bottom:56px}body.editing .callbar{display:none}}
   /* ADMIN */
   .adm-fab{position:fixed;right:18px;bottom:18px;z-index:90;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow);opacity:.75}
@@ -750,7 +761,14 @@
 </section>
 </div>
 </main>
-<nav class="callbar" aria-label="Call or get an estimate"><a href="tel:+19015850944" id="cbCall">📞 Call now</a><a href="/contact">Free estimate</a></nav>
+<nav class="callbar" aria-label="Call or get an estimate"><a href="tel:+19015850944" id="cbCall" aria-haspopup="dialog">📞 Call now</a><a href="/contact">Free estimate</a></nav>
+<div class="callpop" id="callPop" role="dialog" aria-modal="true" aria-label="Call or text GrayCo" hidden>
+  <div class="cp-card"><button type="button" class="cp-x" id="cpClose" aria-label="Close">✕</button>
+    <p class="cp-h">Call or text GrayCo</p>
+    <div class="cp-row"><span class="cp-k">Office</span><a class="cp-num" id="cpOffice" href="tel:+19015850944">📞 (901) 585-0944</a></div>
+    <div class="cp-row" id="cpTextRow" hidden><span class="cp-k">Call or text</span><span class="cp-two"><a class="cp-num" id="cpTextCall" href="#">📞 <span id="cpTextNum"></span></a><a class="cp-sms" id="cpTextSms" href="#">💬 Text</a></span></div>
+  </div>
+</div>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Project details">
   <button class="x" id="mx" aria-label="Close">×</button>
@@ -975,6 +993,26 @@ function render(){
     <div class="bot"><span>© ${new Date().getFullYear()} GrayCo Construction Services, LLC. All rights reserved. Equal opportunity employer.</span>
       <nav><a href="/contact">Privacy</a><a href="/contact">Subcontractor Prequalification</a><a href="/contact">Insurance &amp; Bonding</a></nav></div></div>`;
   const cb = document.getElementById('cbCall'); if (cb && ct.phone) cb.href = 'tel:+1' + ct.phone.replace(/\D/g,'').slice(-10);
+  /* "Call now" opens a small pop-up with both numbers: the office line and the call/text line (TWILIO_FROM, from the phones function).
+     Only tapping a number counts as a call (gc-track counts tel: taps), so opening the pop-up is not a conversion. */
+  const fmt = d => '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+  const od = (ct.phone || '').replace(/\D/g,'').slice(-10);
+  if (od.length === 10) { const o = document.getElementById('cpOffice'); o.href = 'tel:+1' + od; o.textContent = '📞 ' + fmt(od); }
+  if (cb) cb.href = '#call';   /* not a tel: link any more, so opening the pop-up is not counted as a call */
+  if (cb && !cb.dataset.pop) {
+    cb.dataset.pop = '1';
+    const pop = document.getElementById('callPop'), close = () => { pop.hidden = true; cb.focus(); };
+    if (!render._phones) render._phones = fetch('/.netlify/functions/phones').then(r => r.ok ? r.json() : {}).catch(() => ({}));
+    render._phones.then(j => { const d = String(j && j.text || '').replace(/\D/g,'').slice(-10);
+      if (d.length !== 10 || d === od) return;
+      document.getElementById('cpTextNum').textContent = fmt(d);
+      document.getElementById('cpTextCall').href = 'tel:+1' + d; document.getElementById('cpTextSms').href = 'sms:+1' + d;
+      document.getElementById('cpTextRow').hidden = false; });
+    cb.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); pop.hidden = false; document.getElementById('cpClose').focus(); }, true);
+    document.getElementById('cpClose').addEventListener('click', close);
+    pop.addEventListener('click', e => { if (e.target === pop) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !pop.hidden) close(); });
+  }
   wireInteractions();
 }
 
