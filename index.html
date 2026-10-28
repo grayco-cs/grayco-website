@@ -853,16 +853,17 @@ function render(){
   // news
   const newsCard = n => `
     <article class="news-card">${n.link?`<a href="${esc(n.link)}" target="_blank" rel="noopener">`:''}${ph(n.image, 'Photo', n.title)}${n.link?'</a>':''}<span class="d">${esc(n.tag)}</span><h3>${esc(n.title)}</h3><p>${esc(n.text)}</p>${n.link?`<a class="more" href="${esc(n.link)}" target="_blank" rel="noopener">Read More ${AR}</a>`:''}</article>`;
-  document.getElementById('rail').innerHTML = C.news.map(newsCard).join('');
-  document.getElementById('newsGrid').innerHTML = C.news.map(newsCard).join('');
+  const NEWS_MAX = 10;   /* the newest 10 show; older ones drop off the page (their own post links keep working) */
+  document.getElementById('rail').innerHTML = C.news.slice(0, NEWS_MAX).map(newsCard).join('');
+  document.getElementById('newsGrid').innerHTML = C.news.slice(0, NEWS_MAX).map(newsCard).join('');
   document.getElementById('newsHome').hidden = !C.news.length;
   /* News from the CRM: newsletters approved in GrayCo CRM (Marketing) show here automatically, newest first, ahead of the hand-entered cards */
-  if (!render._crmNews) { render._crmNews = fetch('https://crm.grayco-cs.com/.netlify/functions/mkt-public?news=1').then(r => r.json()).then(j => (j && j.posts || []).slice(0, 12)).catch(() => []); }
+  if (!render._crmNews) { render._crmNews = fetch('https://crm.grayco-cs.com/.netlify/functions/mkt-public?news=1').then(r => r.json()).then(j => (j && j.posts || []).slice(0, NEWS_MAX)).catch(() => []); }
   render._crmNews.then(list => {
     if (!list.length) return;
     const fmt = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); } catch(e){ return d || ''; } };
     const cards = list.map(p => ({ title: p.title, text: p.summary, image: p.image, tag: fmt(p.date), link: '/posts/?p=' + encodeURIComponent(p.slug) }));
-    const all = cards.concat(C.news), html = all.map(newsCard).join('');
+    const all = cards.concat(C.news).slice(0, NEWS_MAX), html = all.map(newsCard).join('');
     const g = document.getElementById('newsGrid'), r = document.getElementById('rail'), h = document.getElementById('newsHome');
     if (g) g.innerHTML = html; if (r) r.innerHTML = html; if (h) h.hidden = !all.length;
   });
