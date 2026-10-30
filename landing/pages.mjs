@@ -169,9 +169,9 @@ export const TOWNS = [
   {
     slug: 'bartlett', town: 'Bartlett', state: 'TN',
     title: 'Bartlett TN Contractor | Remodeling & Restoration | GrayCo',
-    desc: 'GrayCo is headquartered on Broadway Road in Bartlett: home remodeling, water and fire damage restoration, insurance claims and commercial work. TN GC #85034.',
-    h1: 'Your Bartlett contractor — headquartered on Broadway Road',
-    intro: 'GrayCo is based at 4007 Broadway Road in Bartlett, and one of our owners grew up here, and we answer water emergencies 24/7. When a Bartlett family wanted their kitchen opened up, we removed a load-bearing wall, installed a beam, remodeled both bathrooms and put on a new roof — 1,900 square feet, top to bottom.',
+    desc: 'GrayCo is headquartered on Ferguson Road in Bartlett: home remodeling, water and fire damage restoration, insurance claims and commercial work. TN GC #85034.',
+    h1: 'Your Bartlett contractor — headquartered on Ferguson Road',
+    intro: 'GrayCo is based at 5796 Ferguson Road in Bartlett, and one of our owners grew up here, and we answer water emergencies 24/7. When a Bartlett family wanted their kitchen opened up, we removed a load-bearing wall, installed a beam, remodeled both bathrooms and put on a new roof — 1,900 square feet, top to bottom.',
     projects: ['Whole-Home Renovation & Kitchen Remodel', 'Custom remodel', 'Kitchen and Bathroom remodels', 'Attic-to-Living Space Conversion'],
     services: ['home-remodeling', 'water-damage-restoration', 'fire-damage-restoration', 'insurance-restoration', 'commercial-construction'],
     near: ['memphis', 'cordova', 'germantown', 'collierville']
